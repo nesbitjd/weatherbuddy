@@ -8,6 +8,8 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/sirupsen/logrus"
+	"main.go/cmd"
 )
 
 func main() {
@@ -16,14 +18,13 @@ func main() {
 		panic(fmt.Errorf("BOT_TOKEN not set"))
 	}
 
-	// Create a new discord session with heroes-bot
+	// Create a new discord session with weatherbuddy
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	// Register the brawl func as a callback for "brawl" events
 	dg.AddHandler(handler)
 
 	err = dg.Open()
@@ -50,9 +51,12 @@ func handler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	message := strings.Split(strings.ToLower(m.Content), " ")
 
 	// If the message is "brawl" reply with heroes
-	if message[0] == "!hello" {
-		body := "Hi there!"
-		s.ChannelMessageSend(m.ChannelID, body)
+	if message[0] == "!weather" {
+		body := cmd.HandleWeather(message)
+		_, err := s.ChannelMessageSendEmbed(m.ChannelID, body)
+		if err != nil {
+			logrus.Errorf("unable to send embed: %w", err)
+		}
 	}
 
 }
