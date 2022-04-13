@@ -1,4 +1,4 @@
-package types
+package weather
 
 type Results struct {
 	Coord  Coordinates `json:"coord"`
@@ -7,6 +7,7 @@ type Results struct {
 	Wind   Wind        `json:"wind"`
 	Clouds Clouds      `json:"clouds"`
 	Sys    ForecastSys `json:"sys"`
+	Name   string      `json:"name"`
 }
 
 type Coordinates struct {
